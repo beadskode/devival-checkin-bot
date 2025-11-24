@@ -1,18 +1,5 @@
-import { checkInData, checkInExcute } from './utility/checkin'
-import { checkOutData, checkOutExcute } from './utility/checkout'
-import { noteData, noteExcute } from './utility/note'
+import * as checkinCommand from './utility/checkin'
+import * as checkoutCommand from './utility/checkout'
+import * as noteCommand from './utility/note'
 
-export default [
-  {
-    data: checkInData,
-    excute: checkInExcute,
-  }, 
-  {
-    data: checkOutData,
-    excute: checkOutExcute,
-  }, 
-  {
-    data: noteData,
-    excute: noteExcute,
-  },
-]
+export default [checkinCommand, checkoutCommand, noteCommand]
