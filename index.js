@@ -7,6 +7,7 @@ import {
 } from 'discord.js';
 import process from 'node:process';
 import commands from './commands/index.js';
+import logger from './logger.js';
 import { findRowData, getSheetName, updateCell } from './sheet.js';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -111,19 +112,22 @@ client.on(Events.InteractionCreate, async (interaction) => {
         }
       }
     } else return;
-  } catch (error) {
-    console.error(error);
+  } catch (error) {   
+    const errorTime = new Date(); 
     if (interaction.replied || interaction.deferred) {
       await interaction.followUp({
         content: '[CODE: 01] 에러가 발생했습니다! 관리자에게 문의해주세요.',
         flags: MessageFlags.Ephemeral,
       });
+      logger.error(`[code: 01] time: ${errorTime.toString()}`);
     } else {
       await interaction.reply({
         content: '[CODE: 02] 에러가 발생했습니다! 관리자에게 문의해주세요.',
         flags: MessageFlags.Ephemeral,
       });
+      logger.error(`[code: 02] time: ${errorTime.toString()}`);
     }
+    logger.error(error);
   }
 });
 
