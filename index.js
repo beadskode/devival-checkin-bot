@@ -7,7 +7,7 @@ import {
 } from 'discord.js';
 import process from 'node:process';
 import commands from './commands/index.js';
-import logger from './logger.js';
+import { logger } from './logger.js';
 import { findRowData, getSheetName, updateCell } from './sheet.js';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
