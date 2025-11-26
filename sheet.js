@@ -21,44 +21,83 @@ const client = await auth.getClient();
 const sheets = google.sheets({ version: "v4", auth: client });
 
 
-//* 템플릿
-const result = await sheets.spreadsheets.values.get({
-  spreadsheetId,
-  range: `${SHEET_NAME}!A2:F`,
-});
+//* 시트 이름 탐색
+export async function getSheetName(userId, nickname) {
+    try {
+        const sheetData = await sheets.spreadsheets.values.get({
+            spreadsheetId,
+            range: '참가자',
+            majorDimension: 'COLUMNS'
+        });
+        const [discordName, discordId, sheetName] = sheetData.data.values;
 
+        const idIdx = discordId.indexOf(userId);
+        const nameIdx = discordName.indexOf(nickname);
+        
+        if (nameIdx > 0 && idIdx <= 0) {
+            await sheets.spreadsheets.values.update({
+                spreadsheetId,
+                range: `참가자!B${nameIdx+1}`,
+                valueInputOption: 'RAW',
+                requestBody: {
+                    values: [[userId]],
+                },
+            });
+        }
+
+        const userIdx = idIdx > 0 ? idIdx : nameIdx;
+        if (userIdx > 0) return sheetName[userIdx];
+        
+        await sheets.spreadsheets.values.append({
+            spreadsheetId,
+            range: '참가자!A:A',
+            valueInputOption: 'RAW',
+            requestBody: {
+                values: [[nickname, userId, '']],
+            },
+        });
+        return false;
+    } catch (error) {
+        console.log('error!!! :', error)
+    }
+}
 
 //* 오늘 날짜로 탐색, 없을 시 신규 행 번호 return
 export async function findRowData(sheetName, date) {
     try {
         if (!sheetName) new Error('no sheetName');
-        const result = await sheets.spreadsheets.values.get({
+        const sheetData = await sheets.spreadsheets.values.get({
             spreadsheetId,
-            range: sheetName,
+            range: `${sheetName}!A:E`,
         });
+        const result = sheetData.data.values;
         const rowNumber = result.findIndex(i => i[0] === date);
-        const emptyRowNumber = result.findIndex(i => !i[0]);
-        return rowNumber > 0 ? { rowNumber, rowData: result[rowNumber] } : { rowNumber: emptyRowNumber, rowData: null };
+
+        if (rowNumber > 0) return { rowNumber: rowNumber + 1, rowData: result[rowNumber] };
+
+        // Row 없을 경우 신규 행 생성
+        await createRow(sheetName, result.length + 1, date);
+        return { rowNumber: result.length + 1, rowData: [date, null, null, null, null] };
+        
     } catch (error) {
-        throw error;
+        console.log('error!!! :', error)
     }
 }
 
-// QQQ
 //* 행 추가
-export async function createRow(sheetName, rowNumber, date, weekday, checkin='', checkout='', note='') {
+export async function createRow(sheetName, rowNumber, date, checkin='', checkout='', note='') {
     try {
         if (!sheetName) new Error('no sheetName');
         await sheets.spreadsheets.values.append({
             spreadsheetId,
-            range: `${sheetName}!A${rowNumber}`,
-            valueInputOption: "RAW",
+            range: sheetName,
+            valueInputOption: "USER_ENTERED",
             requestBody: {
-                values: [[date, weekday, checkin, checkout, note]],
+                values: [[date, `=WEEKDAY(A${rowNumber})`, checkin, checkout, note]],
             },
         });
     } catch (error) {
-        throw error;
+        console.log('error!!! :', error)
     }
 }
 
@@ -76,6 +115,6 @@ export async function updateCell(sheetName, rowNumber, columnRange = '', content
             },
         });
     } catch (error) {
-        throw error;
+        console.log('error!!! :', error)
     }
 }

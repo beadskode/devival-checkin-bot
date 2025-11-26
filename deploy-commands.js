@@ -1,14 +1,14 @@
 import { REST, Routes } from 'discord.js';
-import * as commands from './commands';
+import commands from './commands/index.js';
 
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
-const DISCORD_GUILD_ID = process.env.GUILD_ID;
+const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID;
 
 const c = [];
 
 for (const command of commands) {
-  if (!!command.data && !!command.excute) {
+  if (!!command.data && !!command.execute) {
 	  c.push(command.data.toJSON());
   } else {
 	console.log('error occured in process setting commands')

@@ -1,6 +1,7 @@
 {
   "type": "module",
   "dependencies": {
+    "discord.js": "^14.25.1",
     "googleapis": "^166.0.0"
   }
 }
