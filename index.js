@@ -87,11 +87,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
         case 'in': {
           // 중복 컨펌
           if (rowData[2]) {
-            await interaction.reply('이미 입실 체크를 완료했습니다.');
+            await interaction.reply({
+              flags: MessageFlags.Ephemeral,
+              content:'이미 입실 체크를 완료했습니다.'
+            });
             return;
           }
           await updateCell(sheetName, rowNumber, 'C', timestamp);
-          await interaction.reply('입실 완료!');
           sendMessage(`[${date}] ${nickname}님 입실 완료! 힘내세요 💪 -- ${timestamp}`);
           break;
         }
@@ -99,11 +101,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
         case 'out': {
           // 중복 컨펌
           if (rowData[3]) {
-            await interaction.reply('이미 퇴실 체크를 완료했습니다.');
+            await interaction.reply({
+              flags: MessageFlags.Ephemeral,
+              content:'이미 퇴실 체크를 완료했습니다.'
+            });
             return;
           }
           await updateCell(sheetName, rowNumber, 'D', timestamp);
-          await interaction.reply('퇴실 완료!');
           sendMessage(`[${date}] ${nickname}님 퇴실 완료! 수고하셨습니다 👏 -- ${timestamp}`);
           break;
         }
@@ -111,12 +115,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
         case 'note': {
           // 중복 컨펌
           if (rowData[4]) {
-            await interaction.reply(
-              '이미 특이사항을 제출했습니다. 수정은 관리자에게 문의하세요.'
-            );
+            await interaction.reply({
+              flags: MessageFlags.Ephemeral,
+              content:'이미 특이사항을 제출했습니다. 수정은 관리자에게 문의하세요.'
+            });
             return;
           }
           const note = interaction.options.getString('특이사항');
+          await interaction.reply({
+            flags: MessageFlags.Ephemeral,
+            content: `특이사항을 제출했습니다! '${note}'`
+          });
           await updateCell(sheetName, rowNumber, 'E', note);
           break;
         }
