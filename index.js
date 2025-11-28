@@ -100,7 +100,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           await updateCell(sheetName, rowNumber, 'C', timestamp);
           await interaction.deferReply({ ephemeral: true });
           await interaction.deleteReply();
-          sendMessage(`[${date}] ${nickname}님 입실 완료! 힘내세요 💪 -- ${timestamp}`);
+          sendMessage(`[${date}] ${sheetName ?? nickname}님 입실 완료! 힘내세요 💪 -- ${timestamp}`);
           break;
         }
         // 퇴실시간 제출
@@ -116,7 +116,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           await updateCell(sheetName, rowNumber, 'D', timestamp);
           await interaction.deferReply({ ephemeral: true });
           await interaction.deleteReply();
-          sendMessage(`[${date}] ${nickname}님 퇴실 완료! 수고하셨습니다 👏 -- ${timestamp}`);
+          sendMessage(`[${date}] ${sheetName ?? nickname}님 퇴실 완료! 수고하셨습니다 👏 -- ${timestamp}`);
           break;
         }
         // 특이사항 제출
