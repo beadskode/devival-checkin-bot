@@ -31,6 +31,16 @@ for (const command of commands) {
   }
 }
 
+function sendMessage(message) {
+    const channelId = process.env.DISCORD_CHECKIN_CHANNEL_ID;
+    const channel = client.channels.cache.get(channelId);
+    if (channel) {
+        channel.send(message);
+    } else {
+        console.error('Channel not found!');
+    }
+}
+
 client.on(Events.InteractionCreate, async (interaction) => {
   try {
     if (interaction.isChatInputCommand()) {
@@ -82,6 +92,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           }
           await updateCell(sheetName, rowNumber, 'C', timestamp);
           await interaction.reply('입실 완료!');
+          sendMessage(`[${date}] ${nickname}님 입실 완료! 힘내세요 💪 -- ${timestamp}`);
           break;
         }
         // 퇴실시간 제출
@@ -93,6 +104,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
           }
           await updateCell(sheetName, rowNumber, 'D', timestamp);
           await interaction.reply('퇴실 완료!');
+          sendMessage(`[${date}] ${nickname}님 퇴실 완료! 수고하셨습니다 👏 -- ${timestamp}`);
           break;
         }
         // 특이사항 제출
