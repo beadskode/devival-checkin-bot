@@ -75,7 +75,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
       const sheetName = await getSheetName(userId, nickname);
 
       if (!sheetName) {
-        await interaction.reply('등록되지 않은 사용자입니다. 관리자에게 문의해주세요.');
+        await interaction.reply(
+          {
+            flags: MessageFlags.Ephemeral,
+            content:'등록되지 않은 사용자입니다. 관리자에게 문의해주세요.'
+          });
         return;
       }
 
@@ -94,6 +98,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             return;
           }
           await updateCell(sheetName, rowNumber, 'C', timestamp);
+          await interaction.deferReply({ ephemeral: true });
+          await interaction.deleteReply();
           sendMessage(`[${date}] ${nickname}님 입실 완료! 힘내세요 💪 -- ${timestamp}`);
           break;
         }
@@ -108,6 +114,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             return;
           }
           await updateCell(sheetName, rowNumber, 'D', timestamp);
+          await interaction.deferReply({ ephemeral: true });
+          await interaction.deleteReply();
           sendMessage(`[${date}] ${nickname}님 퇴실 완료! 수고하셨습니다 👏 -- ${timestamp}`);
           break;
         }
