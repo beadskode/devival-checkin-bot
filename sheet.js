@@ -65,7 +65,7 @@ export async function getSheetName(userId, nickname) {
 //* 오늘 날짜로 탐색, 없을 시 신규 행 번호 return
 export async function findRowData(sheetName, date) {
     try {
-        if (!sheetName) new Error('no sheetName');
+        if (!sheetName) throw Error('no sheetName');
         const sheetData = await sheets.spreadsheets.values.get({
             spreadsheetId,
             range: `${sheetName}!A:E`,
@@ -80,14 +80,18 @@ export async function findRowData(sheetName, date) {
         return { rowNumber: result.length + 1, rowData: [date, null, null, null, null] };
         
     } catch (error) {
-        console.log('error!!! :', error)
+        const errorTime = new Date(); 
+        logger.error(`[findRowData] time: ${errorTime.toString()}
+        ${error?.name} : ${error?.message}
+        sheetName, date: ${sheetName}, ${date}
+        `);
     }
 }
 
 //* 행 추가
 export async function createRow(sheetName, rowNumber, date, checkin='', checkout='', note='') {
     try {
-        if (!sheetName) new Error('no sheetName');
+        if (!sheetName) throw Error('no sheetName');
         await sheets.spreadsheets.values.append({
             spreadsheetId,
             range: sheetName,
@@ -97,15 +101,19 @@ export async function createRow(sheetName, rowNumber, date, checkin='', checkout
             },
         });
     } catch (error) {
-        console.log('error!!! :', error)
+        const errorTime = new Date(); 
+        logger.error(`[createRow] time: ${errorTime.toString()}
+        ${error?.name} : ${error?.message}
+        sheetName, rowNumber, date, checkin, checkout, note: ${sheetName}, ${rowNumber}, ${date}, ${checkin}, ${checkout}, ${note}
+        `);
     }
 }
 
 export async function updateCell(sheetName, rowNumber, columnRange = '', content) {
     // checkin: 'C', checkout: 'D', note: 'E'
     try {
-        if (!columnRange) new Error('need ranage')
-        if (!sheetName) new Error('need sheetName');
+        if (!columnRange) throw Error('need range')
+        if (!sheetName) throw Error('need sheetName');
         await sheets.spreadsheets.values.update({
             spreadsheetId,
             range: `${sheetName}!${columnRange}${rowNumber}`,
@@ -115,6 +123,10 @@ export async function updateCell(sheetName, rowNumber, columnRange = '', content
             },
         });
     } catch (error) {
-        console.log('error!!! :', error)
+        const errorTime = new Date(); 
+        logger.error(`[updateCell] time: ${errorTime.toString()}
+        ${error?.name} : ${error?.message}
+        sheetName, rowNumber, columnRange, content: ${sheetName}, ${rowNumber}, ${columnRange}, ${content}
+        `);
     }
 }
