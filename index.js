@@ -97,8 +97,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             });
             return;
           }
-          await updateCell(sheetName, rowNumber, 'C', timestamp);
           await interaction.deferReply({ ephemeral: true });
+          await updateCell(sheetName, rowNumber, 'C', timestamp);
           await interaction.deleteReply();
           sendMessage(`[${date}] ${sheetName ?? nickname}님 입실 완료! 힘내세요 💪 -- ${timestamp}`);
           break;
@@ -113,8 +113,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
             });
             return;
           }
-          await updateCell(sheetName, rowNumber, 'D', timestamp);
           await interaction.deferReply({ ephemeral: true });
+          await updateCell(sheetName, rowNumber, 'D', timestamp);
           await interaction.deleteReply();
           sendMessage(`[${date}] ${sheetName ?? nickname}님 퇴실 완료! 수고하셨습니다 👏 -- ${timestamp}`);
           break;
